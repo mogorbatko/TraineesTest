@@ -71,8 +71,11 @@ public class Application {
 
     //Метод-валидатор строк
     public static String stringsValidator(String string) {
-        //Проверка строки на допустимые символы
-        if (!(string.matches("^[a-zA-Z0-9\\[\\]]*$")) || string.matches("^\\[.+")) {
+        //Проверка строки на допустимые символы и отсутствие пустых подстрок
+        // + проверка, на то, что строка начинается не с квадратной скобки
+        if (!(string.matches("^[a-zA-Z0-9\\[\\]]*$")) ||
+                string.matches("^\\[.+") ||
+                string.matches("^.*\\[]+.*$")) {
             throw new IllegalArgumentException();
         }
         //Проверка соответствия открытых скобок закрытым

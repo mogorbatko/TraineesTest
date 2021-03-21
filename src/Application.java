@@ -31,8 +31,8 @@ public class Application {
         String input = reader.readLine();
         //Вывод консоль распакованной строки
         System.out.println(stringsUnpacker(input));
-
     }
+
     //Метод-распаковщик
     public static String stringsUnpacker(String string) {
         //Проверка строки
@@ -43,6 +43,7 @@ public class Application {
         }
         return string;
     }
+
     //Метод-заменщик подстрок
     public static String stringsReplacer(String string) {
         //Обявление паттерна подстроки
@@ -50,32 +51,51 @@ public class Application {
         Matcher matcher = pattern.matcher(string);
         //Замена подстроки совпадающей с паттерном на размноженную строку
         while (matcher.find()) {
-                string = string.replace(matcher.group(), stringsMultiplier(matcher.group()));
+            string = string.replace(matcher.group(), stringsMultiplier(matcher.group()));
         }
-            return string;
+        return string;
     }
+
     //Метод-множитель строк
     public static String stringsMultiplier(String string) {
         StringBuilder result = new StringBuilder();
-        int i = Integer.parseInt(string.replaceAll("\\D",""));
+        //Кратность
+        int i = Integer.parseInt(string.replaceAll("\\D", ""));
+        //Подстрока
+        String substring = string.replaceAll("\\d|\\W", "");
         for (int j = 0; j < i; j++) {
-            result.append(string.replaceAll("\\d|\\W", ""));
+            result.append(substring);
         }
         return result.toString();
-
     }
+
     //Метод-валидатор строк
     public static String stringsValidator(String string) {
-        if (string.matches("[a-zA-Z0-9]")) {
-            return "";
+        //Проверка строки на допустимые символы
+        if (!(string.matches("^[a-zA-Z0-9\\[\\]]*$")) || string.matches("^\\[.+")) {
+            throw new IllegalArgumentException();
         }
-
-        Pattern pattern = Pattern.compile("\\d?\\[");
-        Matcher matcher = pattern.matcher(string);
-        while (matcher.find()) {
-            if (matcher.group().matches("\\d{0}\\[")) {
-                return "";
+        //Проверка соответствия открытых скобок закрытым
+        int braceCounter = 0;
+        for (int i = 0; i < string.length(); i++) {
+            if (string.charAt(i) == '[') {
+                braceCounter++;
             }
+            if (string.charAt(i) == ']') {
+                braceCounter--;
+                if (braceCounter < 0) {
+                    throw new IllegalArgumentException();
+                }
+            }
+        }
+        if (!(braceCounter == 0)) {
+            throw new IllegalArgumentException();
+        }
+        //Проверка наличия цифр перед скобкой
+        Pattern pattern = Pattern.compile("\\D+\\[");
+        Matcher matcher = pattern.matcher(string);
+        if (matcher.find()) {
+            throw new IllegalArgumentException();
         }
         return string;
     }
